@@ -1,39 +1,35 @@
-name: Multi-Platform Matrix Build
+name: Matrix Build & Artifacts Demo
 
 on:
   push:
     branches:
       - main
-  pull_request:
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]  # 3 OS variants
-        node: [14, 16, 18]                                   # Node.js versions
-      fail-fast: false
-
-    runs-on: ${{ matrix.os }}
+        # Define a matrix with 3 variants
+        node-version: [18, 20, 22]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: matrix-fe0f77a
-        run: echo "Building on ${{ matrix.os }} with Node.js ${{ matrix.node }}"
-
-      - name: Generate build artifact
+      # This step includes the required dynamic identifier
+      - name: Build for Node ${{ matrix.node-version }} ( matrix-fe0f77a)
         run: |
-          echo "Build output for OS=${{ matrix.os }}, Node=${{ matrix.node }}" > output.txt
+          echo "Simulating build for Node.js version ${{ matrix.node-version }}"
+          echo "This is the build output." > build_output.txt
+          echo "Identifier: matrix-c064f21" >> build_output.txt
 
-      - name: Upload artifact
+      # This step uploads an artifact with the required dynamic prefix
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-fe0f77a-${{ matrix.os }}-node${{ matrix.node }}
-          path: output.txt
+          # Use the prefix and include the matrix variant in the name
+          name: build-c064f21-node-${{ matrix.node-version }}
+          path: build_output.txt
+          retention-days: 7
